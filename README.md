@@ -4,6 +4,8 @@ A .NET tool to generate and manage Spotify playlists for your training sessions 
 
 **This tool is specifically designed to generate playlists tailored for zone-based endurance training (e.g., Zone 1, Zone 2, etc.), helping athletes and coaches create music experiences that match the structure and intensity of their workouts.**
 
+![Demo of EightyTwentyPlaylist in action](assets/demo.gif)
+
 ![.NET](https://img.shields.io/badge/.NET-10-blue)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
