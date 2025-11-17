@@ -15,7 +15,7 @@ A .NET tool to generate and manage Spotify playlists for your training sessions 
 ```
 /src                      # Main application source code
 /tests                    # Unit and integration tests
-/.github/workflows         # GitHub Actions workflows
+/.github/workflows        # GitHub Actions workflows
 README.md
 LICENSE
 .gitignore
@@ -51,8 +51,8 @@ flowchart TD
 ### Setup
 1. Clone the repository:
  ```sh
- git clone https://github.com/yourusername/EightyTwentyPlaylist.git
- cd EightyTwentyPlaylist
+ git clone https://github.com/3d0it/eighty-twenty-playlist.git
+ cd eighty-twenty-playlist
  ```
 2. Add your configuration (see below).
 3. Build and run:
