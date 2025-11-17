@@ -1,0 +1,18 @@
+bin/
+obj/
+*.user
+*.suo
+appsettings.Development.json
+.env
+*.db
+*.sqlite
+.vscode/
+.idea/
+*.log
+TestResults/
+*.pfx
+*.snk
+*.vs/
+# Rider
+.idea/
+*.sln.iml
