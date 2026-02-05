@@ -69,7 +69,7 @@ flowchart TD
 ```json
 {
  "Spotify": {
- "RedirectUri": "http://localhost:8888/SpotifyCallback"
+ "RedirectUri": "http://127.0.0.1:8888/SpotifyCallback"
  }
 }
 ```

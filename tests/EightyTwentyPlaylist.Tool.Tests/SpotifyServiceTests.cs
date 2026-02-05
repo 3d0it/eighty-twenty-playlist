@@ -86,7 +86,7 @@ namespace EightyTwentyPlaylist.Tool.Tests
             configMock.Setup(c => c["Spotify:PlaylistsEndpoint"]).Returns("dummy-playlists-endpoint");
             configMock.Setup(c => c["Spotify:PlaylistTracksEndpoint"]).Returns("dummy-playlist-tracks-endpoint");
             configMock.Setup(c => c["Spotify:AuthEndpoint"]).Returns("dummy-auth-endpoint");
-            configMock.Setup(c => c["Spotify:RedirectUri"]).Returns("http://localhost:8888/SpotifyCallback");
+            configMock.Setup(c => c["Spotify:RedirectUri"]).Returns("http://127.0.0.1:8888/SpotifyCallback");
 
             var loggerMock = new Mock<ILogger<SpotifyService>>();
 

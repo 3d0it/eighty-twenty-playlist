@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Text;
-using System.Text.Json;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using System.Linq;
 
 namespace EightyTwentyPlaylist.Tool.Services
 {
@@ -16,6 +13,7 @@ namespace EightyTwentyPlaylist.Tool.Services
         private readonly HttpClient _httpClient;
         private readonly string _apiKey;
         private readonly string _apiEndpoint;
+        private readonly IGeminiClientAdapter _geminiClientAdapter;
         private bool _disposedValue;
 
         /// <summary>
@@ -23,12 +21,14 @@ namespace EightyTwentyPlaylist.Tool.Services
         /// </summary>
         /// <param name="httpClient">The HTTP client to use for requests.</param>
         /// <param name="configuration">The application configuration.</param>
+        /// <param name="geminiClientAdapter">Gemini client adapter for API calls.</param>
         /// <exception cref="ArgumentNullException">Thrown if required configuration is missing.</exception>
-        public GeminiService(HttpClient httpClient, IConfiguration configuration)
+        public GeminiService(HttpClient httpClient, IConfiguration configuration, IGeminiClientAdapter geminiClientAdapter)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _apiKey = configuration["Gemini:ApiKey"] ?? throw new ArgumentNullException("Gemini:ApiKey not found in configuration.");
             _apiEndpoint = configuration["Gemini:ApiEndpoint"] ?? throw new ArgumentNullException("Gemini:ApiEndpoint not found in configuration.");
+            _geminiClientAdapter = geminiClientAdapter ?? throw new ArgumentNullException(nameof(geminiClientAdapter));
         }
 
         /// <inheritdoc />
@@ -64,70 +64,8 @@ DO NOT include any conversational text, explanations, or additional characters. 
         /// <inheritdoc />
         public virtual async Task<string> SendPromptAsync(string prompt)
         {
-            var requestBody = JsonSerializer.Serialize(new
-            {
-                contents = new[]
-                {
-                    new {
-                        parts = new[] {
-                            new {
-                                text = prompt
-                            }
-                        }
-                    }
-                }
-            });
-
-            string url = $"{_apiEndpoint}?key={_apiKey}";
-            using var content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-            HttpResponseMessage response;
-            try
-            {
-                response = await _httpClient.PostAsync(url, content);
-                response.EnsureSuccessStatusCode();
-            }
-            catch (HttpRequestException ex)
-            {
-                return $"Error: HTTP request failed - {ex.Message}";
-            }
-            catch (TaskCanceledException ex)
-            {
-                return $"Error: Request timed out - {ex.Message}";
-            }
-            catch (Exception ex)
-            {
-                return $"Error: Unexpected error - {ex.Message}";
-            }
-
-            string responseBody = await response.Content.ReadAsStringAsync();
-
-            JsonDocument jsonResponse;
-            try
-            {
-                jsonResponse = JsonDocument.Parse(responseBody);
-            }
-            catch (JsonException ex)
-            {
-                return $"Error: Failed to parse JSON response - {ex.Message}";
-            }
-            JsonElement root = jsonResponse.RootElement;
-
-            if (root.TryGetProperty("candidates", out JsonElement candidates))
-            {
-                var candidate = candidates.EnumerateArray().FirstOrDefault();
-                if (candidate.ValueKind != JsonValueKind.Undefined &&
-                    candidate.TryGetProperty("content", out JsonElement contentElement) &&
-                    contentElement.TryGetProperty("parts", out JsonElement parts))
-                {
-                    var part = parts.EnumerateArray().FirstOrDefault();
-                    if (part.ValueKind != JsonValueKind.Undefined &&
-                        part.TryGetProperty("text", out JsonElement text))
-                    {
-                        return text.GetString() ?? string.Empty;
-                    }
-                }
-            }
-            return "Error: Could not extract text from the Gemini response.";
+            var result = await _geminiClientAdapter.GenerateContentAsync(prompt, _apiKey);
+            return result ?? "Error: Could not extract text from the Gemini response.";
         }
 
         /// <summary>
