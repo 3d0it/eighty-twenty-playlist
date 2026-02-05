@@ -35,7 +35,7 @@ flowchart TD
 ```
 
 ## Features
-- Generate playlists based on your training session description, preferred genres, and custom playlist title
+- Generate playlists based on your training session description and preferred genres
 - Automatically search and match tracks on Spotify
 - Create or update a playlist on your Spotify account
 
@@ -88,7 +88,7 @@ flowchart TD
 
 ## Usage
 
-After running the tool, follow the prompts to describe your training session, genres, and (optionally) playlist title. The tool will:
+After running the tool, follow the prompts to describe your training session and genres. The tool will:
 - Generate a playlist using Gemini AI
 - Search for matching tracks on Spotify
 - Create or update your Spotify playlist
@@ -100,7 +100,6 @@ EightyTwentyPlaylist Tool Started
 Enter total duration (e.g.60 minutes):45 minutes
 Enter training session description:45 minutes zone2
 Enter preferred genres (comma separated): Rock, pop
-Enter playlist title (optional, press Enter to use default): My Zone2 Playlist
 ...
 ```
 
