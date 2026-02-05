@@ -1,7 +1,7 @@
 ﻿namespace EightyTwentyPlaylist.Tool.Models
 {
     /// <summary>
-    /// Represents a request for generating a playlist, including duration, description, preferred genres, and playlist title.
+    /// Represents a request for generating a playlist, including duration, description, and preferred genres.
     /// </summary>
     public class PlaylistRequest
     {
@@ -19,10 +19,5 @@
         /// Gets or sets the preferred music genres (comma separated, e.g., "Rock, metal, blues").
         /// </summary>
         public string Genres { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Gets or sets the playlist title (optional).
-        /// </summary>
-        public string? PlaylistTitle { get; set; }
     }
 }
