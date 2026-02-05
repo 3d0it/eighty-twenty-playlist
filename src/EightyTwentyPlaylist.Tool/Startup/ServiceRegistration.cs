@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Net.Http;
 
 namespace EightyTwentyPlaylist.Tool.Startup
 {
@@ -29,7 +30,15 @@ namespace EightyTwentyPlaylist.Tool.Startup
             services.AddSingleton<IConfiguration>(configuration);
             services.AddLogging(config => config.AddConsole().SetMinimumLevel(minLogLevel));
             services.AddHttpClient();
-            services.AddTransient<IGeminiService, GeminiService>();
+            services.AddTransient<IGeminiClientAdapter, GeminiClientAdapter>();
+            services.AddTransient<IGeminiService, GeminiService>(sp =>
+            {
+                var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+                var httpClient = httpClientFactory.CreateClient();
+                var config = sp.GetRequiredService<IConfiguration>();
+                var adapter = sp.GetRequiredService<IGeminiClientAdapter>();
+                return new GeminiService(httpClient, config, adapter);
+            });
             services.AddTransient<ISpotifyService, SpotifyService>();
         }
     }
