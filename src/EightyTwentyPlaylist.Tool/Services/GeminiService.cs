@@ -80,6 +80,7 @@ DO NOT include any conversational text, explanations, or additional characters. 
 
             string url = $"{_apiEndpoint}?key={_apiKey}";
             using var content = new StringContent(requestBody, Encoding.UTF8, "application/json");
+            //content.Headers.Add("X-goog-api-key", _apiKey);
             HttpResponseMessage response;
             try
             {

@@ -52,5 +52,27 @@ namespace EightyTwentyPlaylist.Tool.Tests
             Assert.Equal("Artist1", result[0].Artist);
             Assert.Equal("Song1", result[0].Title);
         }
+
+        [Theory]
+        [InlineData("My Playlist", true)]
+        [InlineData("", false)]
+        [InlineData(" ", false)]
+        [InlineData("A", true)]
+        [InlineData("A very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long title", false)]
+        [InlineData("Valid!@#", true)]
+        [InlineData("Invalid\u0001", false)]
+        public void IsValidSpotifyPlaylistTitle_Works(string title, bool expected)
+        {
+            // Arrange
+            var method = typeof(EightyTwentyPlaylist.Tool.PlaylistApp).GetMethod("IsValidSpotifyPlaylistTitle", BindingFlags.NonPublic | BindingFlags.Static);
+            Assert.NotNull(method);
+            object?[] parameters = new object?[] { title, null };
+
+            // Act
+            bool result = (bool)method.Invoke(null, parameters)!;
+
+            // Assert
+            Assert.Equal(expected, result);
+        }
     }
 }

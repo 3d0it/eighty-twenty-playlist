@@ -55,6 +55,16 @@ namespace EightyTwentyPlaylist.Tool
             AnsiConsole.MarkupLine("[bold yellow]EightyTwentyPlaylist Tool Started[/]");
             var playlistRequest = PromptUserForRequest();
 
+            // Validate playlist title (Spotify: 1-100 chars, no control chars)
+            string playlistTitle = string.IsNullOrWhiteSpace(playlistRequest.PlaylistTitle)
+                ? "MyDailyTrain"
+                : playlistRequest.PlaylistTitle.Trim();
+            if (!IsValidSpotifyPlaylistTitle(playlistTitle, out string? validationError))
+            {
+                AnsiConsole.MarkupLine($"[red]Invalid playlist title: {validationError}[/]");
+                return;
+            }
+
             try
             {
                 AnsiConsole.MarkupLine("[yellow]Generating song list...[/]");
@@ -84,8 +94,8 @@ namespace EightyTwentyPlaylist.Tool
                     return;
                 }
 
-                await _spotifyService.ManagePlaylistAsync("MyDailyTrain", trackIds, userAccessToken);
-                AnsiConsole.MarkupLine("[green]Playlist 'MyDailyTrain' has been successfully updated on Spotify![/]");
+                await _spotifyService.ManagePlaylistAsync(playlistTitle, trackIds, userAccessToken);
+                AnsiConsole.MarkupLine($"[green]Playlist '{playlistTitle}' has been successfully updated on Spotify![/]");
             }
             catch (Exception ex)
             {
@@ -115,12 +125,45 @@ namespace EightyTwentyPlaylist.Tool
                     .DefaultValue("Rock, metal, blues")
                     .Validate(x => !string.IsNullOrWhiteSpace(x)));
 
+            string? playlistTitle = AnsiConsole.Prompt(
+                new TextPrompt<string>("Enter playlist title (optional, press Enter to use default):")
+                    .AllowEmpty());
+
             return new PlaylistRequest
             {
                 Duration = duration,
                 Description = description,
-                Genres = genres
+                Genres = genres,
+                PlaylistTitle = string.IsNullOrWhiteSpace(playlistTitle) ? null : playlistTitle.Trim()
             };
+        }
+
+        /// <summary>
+        /// Validates a playlist title according to Spotify rules.
+        /// </summary>
+        /// <param name="title">The playlist title.</param>
+        /// <param name="error">Validation error message if invalid.</param>
+        /// <returns>True if valid, false otherwise.</returns>
+        private static bool IsValidSpotifyPlaylistTitle(string title, out string? error)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                error = "Playlist title cannot be empty.";
+                return false;
+            }
+            if (title.Length < 1 || title.Length > 100)
+            {
+                error = "Playlist title must be between 1 and 100 characters.";
+                return false;
+            }
+            // Disallow control characters (ASCII < 32)
+            if (title.Any(c => char.IsControl(c)))
+            {
+                error = "Playlist title cannot contain control characters.";
+                return false;
+            }
+            error = null;
+            return true;
         }
 
         /// <summary>
